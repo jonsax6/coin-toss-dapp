@@ -27,6 +27,12 @@ function coinFlip(state = {}, action) {
       return { ...state, balanceLoading: true }
     case 'BALANCE_LOADED':
       return { ...state, balanceLoading: false }
+    case 'BET_EXECUTING':
+      return { ...state, betExecuting: true }
+    case 'BET_EXECUTED':
+      return { ...state, betExecuting: false }
+    case 'BET_FAILED':
+      return { ...state, betExecuting: false }
     default:
       return state
   }

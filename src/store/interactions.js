@@ -6,7 +6,8 @@ import {
   etherBalanceLoaded,
   coinFlipEtherBalanceLoaded,
   balanceLoading,
-  balanceLoaded
+  balanceLoaded,
+  betExecuted
 } from './actions'
 import CoinFlip from '../abis/CoinFlip.json'
 
@@ -87,7 +88,22 @@ export const withdrawEther = (dispatch, coinFlip, web3, amount, account) => {
   })
 }
 
-export const flipCoin = ( dispatch, coinFlip, amount, account ) => {
+export const testFlip = (inputAmount) => {
+  console.log(inputAmount)
+}
+
+export const flipCoin = (dispatch, coinFlip, amount, account) => {
   // call coinFlip function in coinFlip contract
   // alter balances based on win or lose
+  coinFlip.methods.coinFlip(amount).send({ from: account })
+  .on('transactionHash', (hash) => {
+     dispatch(betExecuted())
+  })
+  .on('error', (error) => {
+    dispatch(betExecuted())
+  })
+  let res = {data: "Executed"}
+
+  dispatch(betExecuted(res.data))
+
 }

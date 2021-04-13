@@ -61,3 +61,15 @@ export function etherWithdrawAmountChanged(amount) {
     amount
   }
 }
+
+export function betExecuted(input) {
+  if(input == "success") {
+    return {
+      type: 'BET_EXECUTED',
+    }
+  } else {
+    return {
+      type: 'BET_FAILED',
+    }
+  }
+}

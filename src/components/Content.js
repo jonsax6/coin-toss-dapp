@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import Balance from './Balance'
 import { coinFlipSelector } from '../store/selectors'
 import { subscribeToEvents } from '../store/interactions'
+import CoinFlip from './CoinFlip'
 
 
 class Content extends Component {
@@ -23,15 +24,7 @@ class Content extends Component {
 
         </div>
         <div className="vertical">
-          <div className="card bg-dark text-white">
-            <div className="card-header">
-              Toss A Coin
-            </div>
-            <div className="card-body">
-              <p className="card-text">Set your bet here!  If you get heads, double your money!  Tails?  hm... Well you know...</p>
-              <a href="/#" className="card-link">Card link</a>
-            </div>
-          </div>
+          <CoinFlip />
         </div>
         <div className="vertical-split">
           <div className="card bg-dark text-white">
