@@ -4,6 +4,7 @@ import Balance from './Balance'
 import { coinFlipSelector } from '../store/selectors'
 import { subscribeToEvents } from '../store/interactions'
 import CoinFlip from './CoinFlip'
+import BetHistory from './BetHistory'
 
 
 class Content extends Component {
@@ -21,41 +22,12 @@ class Content extends Component {
       <div className="content">
         <div className="vertical">
           <Balance />
-
         </div>
         <div className="vertical">
           <CoinFlip />
         </div>
-        <div className="vertical-split">
-          <div className="card bg-dark text-white">
-            <div className="card-header">
-              Card 3
-            </div>
-            <div className="card-body">
-              <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              <a href="/#" className="card-link">Card link</a>
-            </div>
-          </div>
-          <div className="card bg-dark text-white">
-            <div className="card-header">
-              Card 4
-            </div>
-            <div className="card-body">
-              <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              <a href="/#" className="card-link">Card link</a>
-            </div>
-          </div>
-        </div>
         <div className="vertical">
-          <div className="card bg-dark text-white">
-            <div className="card-header">
-              Card 5
-            </div>
-            <div className="card-body">
-              <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              <a href="/#" className="card-link">Card link</a>
-            </div>
-          </div>
+          <BetHistory />
         </div>
       </div>
     )

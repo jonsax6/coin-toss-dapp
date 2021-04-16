@@ -21,6 +21,51 @@ export function coinFlipLoaded(contract) {
   }
 }
 
+export function treasuryFunded(amount) {
+  return {
+    type: 'TREASURY_FUNDED',
+    amount
+  }
+}
+
+export function betExecuting() {
+  return {
+    type: 'BET_EXECUTING',
+  }
+}
+
+export function betExecuted(input) {
+  if(input == "success") {
+    return {
+      type: 'BET_EXECUTED',
+    }
+  } else {
+    return {
+      type: 'BET_FAILED',
+    }
+  }
+}
+
+export function betAmountChanged(amount) {
+  return {
+    type: 'BET_AMOUNT_CHANGED',
+    amount
+  }
+}
+
+export function betsLoading() {
+  return {
+    type: 'BETS_LOADING'
+  }
+}
+
+export function betsLoaded(bets) {
+  return {
+    type: 'BETS_LOADED',
+    bets
+  }
+}
+
 // Balances
 export function etherBalanceLoaded(balance) {
   return {
@@ -62,14 +107,4 @@ export function etherWithdrawAmountChanged(amount) {
   }
 }
 
-export function betExecuted(input) {
-  if(input == "success") {
-    return {
-      type: 'BET_EXECUTED',
-    }
-  } else {
-    return {
-      type: 'BET_FAILED',
-    }
-  }
-}
+

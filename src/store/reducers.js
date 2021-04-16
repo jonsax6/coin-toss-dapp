@@ -17,6 +17,8 @@ function coinFlip(state = {}, action) {
   switch (action.type) {
     case 'COINFLIP_LOADED':
       return { ...state, loaded: true, contract: action.contract }
+    case 'TREASURY_FUNDED':
+      return { ...state, funded: true, contract: action.amount }
     case 'COINFLIP_ETHER_BALANCE_LOADED':
       return { ...state, etherBalance: action.balance } 
     case 'ETHER_DEPOSIT_AMOUNT_CHANGED':
@@ -33,6 +35,10 @@ function coinFlip(state = {}, action) {
       return { ...state, betExecuting: false }
     case 'BET_FAILED':
       return { ...state, betExecuting: false }
+    case 'BETS_LOADING':
+      return { ...state, betsLoading: true }
+    case 'BETS_LOADED':
+      return { ...state, bets: { loaded: true, data: action.bets}}
     default:
       return state
   }

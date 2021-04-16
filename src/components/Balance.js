@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Spinner from './Spinner'
+import Treasury from './Treasury'
 import { Tabs, Tab, Button } from 'react-bootstrap'
 import { loadBalances, depositEther, withdrawEther } from '../store/interactions'
 import {
@@ -35,7 +36,7 @@ const showForm = (props) => {
             <tr>
               <th>Token</th>
               <th>Wallet</th>
-              <th>CoinFlip</th>
+              <th>CoinFlip Account</th>
             </tr>
           </thead>
           <tbody>
@@ -70,7 +71,7 @@ const showForm = (props) => {
             <tr>
               <th>Token</th>
               <th>Wallet</th>
-              <th>CoinFlip</th>
+              <th>CoinFlip Account</th>
             </tr>
           </thead>
           <tbody>
@@ -99,8 +100,8 @@ const showForm = (props) => {
           </div>
         </form>
       </Tab>
+      <Treasury />
     </Tabs>
-
   )
 }
 

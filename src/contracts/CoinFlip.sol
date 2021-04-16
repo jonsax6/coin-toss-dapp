@@ -14,10 +14,10 @@ import "node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
 contract CoinFlip is Ownable {
   using SafeMath for uint;
   // Variables
-  uint private balance;
-  uint private bet;
-  uint private treasury;
-  uint private allPlayersBalance;
+  uint public balance;
+  uint public bet;
+  uint public treasury;
+  uint public allPlayersBalance;
 
   constructor() public payable {
     uint initFund = msg.value;
@@ -27,7 +27,7 @@ contract CoinFlip is Ownable {
 
   // mappings
   // Tracks the user balances stored in the contract
-  mapping (address => uint256) public playerBalances;
+  mapping (address => uint256) private playerBalances;
 
   // players array
   address payable[] public players;
@@ -35,7 +35,7 @@ contract CoinFlip is Ownable {
   // events
   event Deposit(address user, uint256 amount, uint256 balance);
   event Withdraw(address user, uint256 withdrawAmount, uint256 currentBalance);
-  event Bet(address user, uint256 bet, string outcome);
+  event Bet(address user, uint256 betAmount, string outcome, uint timestamp);
   event Fund(uint value);
   // structs
   
@@ -53,7 +53,7 @@ contract CoinFlip is Ownable {
       allPlayersBalance = allPlayersBalance.add(msg.value);
       assert(treasury + allPlayersBalance == address(this).balance);
       emit Deposit(msg.sender, msg.value, playerBalances[msg.sender]);
-      return playerBalance(msg.sender);
+      return playerBalances[msg.sender];
   }
 
   // owner funds the treasury balance
@@ -66,8 +66,8 @@ contract CoinFlip is Ownable {
   }
 
   // querries the player's available balance in the contract
-  function playerBalance(address _player) public view returns (uint256){
-    return playerBalances[_player];
+  function playerBalance() public view returns (uint256){
+    return playerBalances[msg.sender];
   }
 
   // the total balance available in the contract treasury, these funds still belong to owner
@@ -76,19 +76,19 @@ contract CoinFlip is Ownable {
   }
 
   // the total funds in the contract, including all player funds + treasury funds
-  function totalBalance() public view returns (address, uint) {
+  function totalBalance() public view onlyOwner returns (address, uint) {
     assert(treasury + allPlayersBalance == address(this).balance);
     return(address(this), address(this).balance);
   }
 
   // only player can withdraw their own funds, contract owner cannot withdraw or transfer these funds
   function playerWithdraw(uint256 _amount) public payable {
-      require(playerBalances[msg.sender] >= _amount);
-      playerBalances[msg.sender] = playerBalances[msg.sender].sub(_amount);
-      allPlayersBalance = allPlayersBalance.sub(_amount);
-      msg.sender.transfer(_amount);
-      assert(treasury + allPlayersBalance == address(this).balance);
-      emit Withdraw(msg.sender, _amount, playerBalances[msg.sender]);
+    require(playerBalances[msg.sender] >= _amount);
+    playerBalances[msg.sender] = playerBalances[msg.sender].sub(_amount);
+    allPlayersBalance = allPlayersBalance.sub(_amount);
+    msg.sender.transfer(_amount);
+    assert(treasury + allPlayersBalance == address(this).balance);
+    emit Withdraw(msg.sender, _amount, playerBalances[msg.sender]);
   }
 
   // only owner can withdraw the treasury funds
@@ -103,7 +103,7 @@ contract CoinFlip is Ownable {
     return now % 2;
   }
 
-  function coinFlip(uint256 _amount) public payable costs(0.001 ether) returns(string memory) {
+  function coinFlip(uint _amount) public returns(string memory) {
     require(_amount <= playerBalances[msg.sender]);
     require(_amount <= treasury);
 
@@ -121,9 +121,9 @@ contract CoinFlip is Ownable {
       allPlayersBalance = allPlayersBalance.sub(_amount);
       treasury = treasury.add(_amount);
     }
-    
+
     assert(treasury + allPlayersBalance == address(this).balance);
-    emit Bet(msg.sender, _amount, outcome);
+    emit Bet(msg.sender, _amount, outcome, now);
     return outcome;
   }
 }
