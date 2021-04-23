@@ -27,17 +27,31 @@ contract CoinFlip is Ownable {
 
   // mappings
   // Tracks the user balances stored in the contract
-  mapping (address => uint256) private playerBalances;
+  mapping (address => uint) public playerBalances;
+  mapping (address => string) public usernames;
 
   // players array
-  address payable[] public players;
+  address [] public players;
 
   // events
-  event Deposit(address user, uint256 amount, uint256 balance);
+  event Deposit(address user, uint256 amount, uint256 balance, string username);
   event Withdraw(address user, uint256 withdrawAmount, uint256 currentBalance);
-  event Bet(address user, uint256 betAmount, string outcome, uint timestamp);
+  event Bet(address user, string username, uint256 betAmount, string outcome, uint timestamp);
   event Fund(uint value);
+  
   // structs
+  struct _Bet {
+    address account;
+    string username;
+    uint256 wagerAmount;
+    string outcome;
+    uint256 timestamp;
+  }
+
+  struct _Player {
+    address account;
+    string username;
+  }
   
   // modifiers
   modifier costs(uint cost) {
@@ -48,12 +62,13 @@ contract CoinFlip is Ownable {
   // functions
 
   // player deposits funds into contract for betting use
-  function deposit() public payable returns(uint){        
-      playerBalances[msg.sender] = playerBalances[msg.sender].add(msg.value);
-      allPlayersBalance = allPlayersBalance.add(msg.value);
-      assert(treasury + allPlayersBalance == address(this).balance);
-      emit Deposit(msg.sender, msg.value, playerBalances[msg.sender]);
-      return playerBalances[msg.sender];
+  function deposit() public payable returns(uint){
+    string memory _username = usernames[msg.sender];
+    playerBalances[msg.sender] = playerBalances[msg.sender].add(msg.value);
+    allPlayersBalance = allPlayersBalance.add(msg.value);
+    assert(treasury + allPlayersBalance == address(this).balance);
+    emit Deposit(msg.sender, msg.value, playerBalances[msg.sender], _username);
+    return playerBalances[msg.sender];
   }
 
   // owner funds the treasury balance
@@ -70,6 +85,18 @@ contract CoinFlip is Ownable {
     return playerBalances[msg.sender];
   }
 
+  function getTreasuryBalance() public view returns (uint256) {
+    return treasury;
+  }
+
+  function addUsername(string memory _username, address _user) public {
+    usernames[_user] = _username;
+  }
+
+  function getUsername() public view returns (string memory) {
+    return usernames[msg.sender];
+  }
+
   // the total balance available in the contract treasury, these funds still belong to owner
   function getBalance() public view returns (address, uint) {
     return(address(this), treasury);
@@ -82,7 +109,7 @@ contract CoinFlip is Ownable {
   }
 
   // only player can withdraw their own funds, contract owner cannot withdraw or transfer these funds
-  function playerWithdraw(uint256 _amount) public payable {
+  function playerWithdraw(uint256 _amount) public {
     require(playerBalances[msg.sender] >= _amount);
     playerBalances[msg.sender] = playerBalances[msg.sender].sub(_amount);
     allPlayersBalance = allPlayersBalance.sub(_amount);
@@ -107,8 +134,10 @@ contract CoinFlip is Ownable {
     require(_amount <= playerBalances[msg.sender]);
     require(_amount <= treasury);
 
+    string memory _username = usernames[msg.sender];
     uint256 randomNum = random();
     string memory outcome;
+
     if(randomNum == 1){
       outcome = "win";
       playerBalances[msg.sender] = playerBalances[msg.sender].add(_amount);
@@ -123,7 +152,7 @@ contract CoinFlip is Ownable {
     }
 
     assert(treasury + allPlayersBalance == address(this).balance);
-    emit Bet(msg.sender, _amount, outcome, now);
+    emit Bet(msg.sender, _username, _amount, outcome, now);
     return outcome;
   }
 }

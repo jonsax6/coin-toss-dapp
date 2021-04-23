@@ -14,9 +14,26 @@ export const coinFlipSelector = createSelector(coinFlip, cf => cf)
 const coinFlipLoaded = state => get(state, 'coinFlip.loaded', false)
 export const coinFlipLoadedSelector = createSelector(coinFlipLoaded, cfl => cfl)
 
+const username = state => get(state, 'coinFlip.username')
+export const usernameSelector = createSelector(username, un => un)
+
+const treasuryBalance = state => get(state, 'coinFlip.treasuryBalance.balance', 0)
+export const treasuryBalanceSelector = createSelector(treasuryBalance, 
+  (balance) => {
+    if(balance === 0){
+      return balance
+    } 
+    else {
+      return formatBalance(balance)
+    }
+  })
+
 // BALANCES
 const balanceLoading = state => get(state, 'coinFlip.balanceLoading', true)
 export const balanceLoadingSelector = createSelector(balanceLoading, status => status)
+
+const betExecuting = state => get(state, 'coinFlip.betExecuting', true)
+export const betExecutingSelector = createSelector(betExecuting, status => status)
 
 const etherBalance = state => get(state, 'web3.balance', 0)
 export const etherBalanceSelector = createSelector(

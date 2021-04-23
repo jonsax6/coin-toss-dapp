@@ -16,6 +16,6 @@ export const tokens = ether
 
 export const formatBalance = (balance) => {
   balance = ether(balance)
-  balance = Math.round(balance * 100)/100 // rounded to two decimal places
+  balance = Math.round(balance * 10000)/10000 // rounded to four decimal places
   return balance
 }

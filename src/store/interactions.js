@@ -5,11 +5,17 @@ import {
   coinFlipLoaded,
   etherBalanceLoaded,
   coinFlipEtherBalanceLoaded,
+  usernameAdded,
+  usernameLoaded,
   balanceLoading,
   balanceLoaded,
+  betExecuting,
   betExecuted,
-  betsLoaded,
-  treasuryFunded
+  allBetsLoaded,
+  allDepositsLoaded,
+  treasuryFunded,
+  treasuryBalanceLoaded,
+  usernameAdding
 } from './actions'
 import CoinFlip from '../abis/CoinFlip.json'
 
@@ -36,11 +42,22 @@ export const loadBalances = async (dispatch, web3, coinFlip, account) => {
       const coinFlipEtherBalance = await coinFlip.methods.playerBalance().call({ from: account })
       dispatch(coinFlipEtherBalanceLoaded(coinFlipEtherBalance))
 
+      const treasuryBalance = await coinFlip.methods.getTreasuryBalance().call()
+      console.log(treasuryBalance)
+      dispatch(treasuryBalanceLoaded(treasuryBalance))
+
       // Trigger all balances loaded
       dispatch(balanceLoaded())
     } else {
       window.alert('Please login with MetaMask')
     }
+}
+
+export const loadUsername = async (dispatch, coinFlip, account) => {
+  if(typeof account !== 'undefined') {
+    const username = await coinFlip.methods.getUsername().call({ from: account })
+    dispatch(usernameLoaded(username))
+  }
 }
 
 export const loadCoinFlip = async (web3, networkId, dispatch) => {
@@ -54,37 +71,66 @@ export const loadCoinFlip = async (web3, networkId, dispatch) => {
   }
 }
 
+export const subscribeToEvents = async (coinFlip, dispatch) => {
+  coinFlip.events.Bet({}, (error, event) => {
+    loadAllBets(coinFlip, dispatch)
+  })  
+
+  // coinFlip.events.Deposit({}, (error, event) => {
+  //   dispatch(coinFlipEtherBalanceLoaded())
+  // })
+
+  // coinFlip.events.Withdraw({}, (error, event) => {
+  //   dispatch(coinFlipEtherBalanceLoaded())
+  // })
+
+  // coinFlip.events.Fund({}, (error, event) => {
+  //   dispatch(coinFlipEtherBalanceLoaded())
+  // })
+}
+
 export const loadAllBets = async (coinFlip, dispatch) => {
   // Fetch filled bets with the "Bet" event stream
   const betStream = await coinFlip.getPastEvents('Bet', { fromBlock: 0, toBlock: 'latest' })
+  console.log(betStream)
   // Format Filled bets
-  const bets = betStream.map((event) => event.returnValues)
+  let allBets = betStream.map((event) => event.returnValues)
+
+  const checkWins = (bet) => {
+    return bet.outcome == "win"
+  }
+
+  const checkLoses = (bet) => {
+    return bet.outcome == "lose"
+  }
+
+  let winBets = allBets.filter(checkWins)
+  console.log(winBets)
+
+  let loseBets = allBets.filter(checkLoses)
+  console.log(loseBets)
+
+  winBets = winBets.sort((a,b) => b.betAmount - a.betAmount)
+  loseBets = loseBets.sort((a,b) => a.betAmount - b.betAmount)
+  allBets = {...winBets, ...loseBets}
+  console.log({...winBets, ...loseBets})
   // Add bets to the redux store
-  dispatch(betsLoaded(bets))
+  dispatch(allBetsLoaded(allBets))
 }
 
-export const subscribeToEvents = async (coinFlip, dispatch) => {
-  coinFlip.events.Bet({}, (error, event) => {
-    dispatch(coinFlip(event.returnValues))
-  })  
-
-  coinFlip.events.Deposit({}, (error, event) => {
-    dispatch(coinFlipEtherBalanceLoaded())
-  })
-
-  coinFlip.events.Withdraw({}, (error, event) => {
-    dispatch(coinFlipEtherBalanceLoaded())
-  })
-
-  coinFlip.events.Fund({}, (error, event) => {
-    dispatch(coinFlipEtherBalanceLoaded())
-  })
+export const getUsername = async (dispatch, coinFlip, account) => {
+  // Fetch all deposits from "Deposit" event stream
+  const username = await coinFlip.methods.getUsername().call({ from: account })
+  // add to redux state
+  dispatch(usernameAdded(username))
 }
 
 export const depositEther = (dispatch, coinFlip, web3, amount, account) => {
+  dispatch(balanceLoading())
   coinFlip.methods.deposit().send({ from: account,  value: web3.utils.toWei(`${amount}`, 'ether') })
   .on('transactionHash', (hash) => {
-    dispatch(balanceLoading())
+    dispatch(balanceLoaded())
+    loadBalances(dispatch, web3, coinFlip, account)
   })
   .on('error',(error) => {
     console.error(error)
@@ -93,9 +139,10 @@ export const depositEther = (dispatch, coinFlip, web3, amount, account) => {
 }
 
 export const withdrawEther = (dispatch, coinFlip, web3, amount, account) => {
-  coinFlip.methods.withdraw(web3.utils.toWei(`${amount}`, 'ether')).send({ from: account })
+  coinFlip.methods.playerWithdraw(web3.utils.toWei(`${amount}`, 'ether')).send({ from: account })
   .on('transactionHash', (hash) => {
     dispatch(balanceLoading())
+    loadBalances(dispatch, web3, coinFlip, account)
   })
   .on('error',(error) => {
     console.error(error)
@@ -103,8 +150,30 @@ export const withdrawEther = (dispatch, coinFlip, web3, amount, account) => {
   })
 }
 
-export const testFlip = (inputAmount) => {
-  console.log(inputAmount)
+export const withdrawTreasury = (dispatch, coinFlip, web3, amount, account) => {
+  coinFlip.methods.withdraw(web3.utils.toWei(`${amount}`, `ether`)).send({ from: account })
+  .on('transactionHash', (hash) => {
+    dispatch(balanceLoading())
+    loadBalances(dispatch, web3, coinFlip, account)
+  })
+  .on('error',(error) => {
+    console.error(error)
+    window.alert('There was an error!')
+  })
+}
+
+// export const addName = (dispatch, userList, username, account) => {
+//   dispatch(usernameAdding(true))
+//   let nameAccount = { username, account }
+//   // for(let i=0, i=coin)
+//   dispatch(usernameAdded(nameAccount))
+//   dispatch(usernameAdding(false))
+// }
+
+export const addUsername = async (dispatch, coinFlip, username, account) => {
+  dispatch(usernameAdding(true))
+  await coinFlip.methods.addUsername(username, account).send({ from: account })
+  dispatch(usernameAdding(false))
 }
 
 export const fundTreasury = (dispatch, coinFlip, web3, amount, account) => {
@@ -112,6 +181,7 @@ export const fundTreasury = (dispatch, coinFlip, web3, amount, account) => {
   coinFlip.methods.fundTreasury().send({ from: account, value: fundAmount })
   .on('transactionHash', (hash) => {
     dispatch(treasuryFunded(amount))
+    loadBalances(dispatch, web3, coinFlip, account)
   })
   .on('errro', (error) => {
     console.log(error)
@@ -120,16 +190,18 @@ export const fundTreasury = (dispatch, coinFlip, web3, amount, account) => {
 }
 
 export const flipCoin = (dispatch, coinFlip, web3, amount, account) => {
+  // setState betExecuting
   // call coinFlip function in coinFlip contract
   // alter balances based on win or lose
+  dispatch(betExecuting())
   let betAmount = web3.utils.toWei(`${amount}`, 'ether');
-  console.log(betAmount)
   coinFlip.methods.coinFlip(betAmount).send( { from: account } )
   .on('transactionHash', (hash) => {
-     dispatch(betExecuted())
+    dispatch(betExecuted())
   })
   .on('error', (error) => {
     console.error(error)
     window.alert(`There was an error!`)  
+    dispatch(betExecuted())
   })
 }

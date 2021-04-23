@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Balance from './Balance'
-import { coinFlipSelector } from '../store/selectors'
-import { subscribeToEvents } from '../store/interactions'
+import { coinFlipSelector, accountSelector, web3Selector } from '../store/selectors'
+import { subscribeToEvents, loadBalances } from '../store/interactions'
 import CoinFlip from './CoinFlip'
 import BetHistory from './BetHistory'
 
@@ -13,7 +13,7 @@ class Content extends Component {
   }
 
   async loadBlockchainData(props) {
-    const { dispatch, coinFlip } = props
+    const { dispatch, web3, coinFlip, account } = props
     await subscribeToEvents(coinFlip, dispatch)
   }
 
@@ -36,7 +36,9 @@ class Content extends Component {
 
 function mapStateToProps(state) {
   return {
-    coinFlip: coinFlipSelector(state)
+    coinFlip: coinFlipSelector(state),
+    account: accountSelector(state),
+    web3: web3Selector(state)
   }
 }
 

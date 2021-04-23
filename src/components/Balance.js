@@ -1,27 +1,31 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import Spinner from './Spinner'
+import CoinSpinner from './CoinSpinner'
 import Treasury from './Treasury'
 import { Tabs, Tab, Button } from 'react-bootstrap'
-import { loadBalances, depositEther, withdrawEther } from '../store/interactions'
+import { loadBalances, depositEther, withdrawEther, addUsername, loadUsername } from '../store/interactions'
 import {
   accountSelector,
   coinFlipSelector,
   web3Selector,
+  usernameSelector,
   etherBalanceSelector,
   coinFlipEtherBalanceSelector,
   balanceLoadingSelector,
   etherDepositAmountSelector,
-  etherWithdrawAmountSelector
+  etherWithdrawAmountSelector,
+  betExecutingSelector
 } from '../store/selectors'
-import { etherDepositAmountChanged, etherWithdrawAmountChanged } from '../store/actions'
+import { etherDepositAmountChanged, etherWithdrawAmountChanged, usernameChanged } from '../store/actions'
 
 const showForm = (props) => {
+  // change to hooks when transforming to rfc-hooks
   const {
     dispatch,
     account,
     coinFlip,
     web3,
+    username,
     etherBalance,
     coinFlipEtherBalance,
     etherDepositAmount,
@@ -49,8 +53,30 @@ const showForm = (props) => {
         </table>
         <form className="row" onSubmit={(event) => {
           event.preventDefault()
+          addUsername(dispatch, coinFlip, username, account)
+          console.log("adding username...")
+          }}>
+          <div className="col-12 col-sm pr-sm-2">
+            <input 
+              type='text'
+              placeholder="choose a username..."
+              className="form-control form-control-sm bg-dark text-white"
+              onChange = {(e) => dispatch( usernameChanged(e.target.value) )}
+              required />
+          </div>
+          <div className="col-12 col-sm-auto bt-3 pl-sm-0">
+            <Button type="submit" className="btn btn-primary btn-block btn-sm">Add Username</Button>
+          </div>
+        </form>
+          <div className="row ">
+            <div className="col-12 col-sm pr-sm-2">&nbsp;</div>
+          </div>
+
+        <form className="row" onSubmit={(event) => {
+          event.preventDefault()
           depositEther(dispatch, coinFlip, web3, etherDepositAmount, account)
           console.log("form submitting...")
+          loadBalances(dispatch, web3, coinFlip, account)
         }}>
           <div className="col-12 col-sm pr-sm-2">
             <input
@@ -100,7 +126,9 @@ const showForm = (props) => {
           </div>
         </form>
       </Tab>
-      <Treasury />
+      {account === "0xE47049d21487336a321f0A8a3E09f44dE25A4c94" ? <Tab eventKey="treasury" title="Treasury" className="bg-dark">        
+        <Treasury />
+      </Tab> : <></> }
     </Tabs>
   )
 }
@@ -110,9 +138,11 @@ class Balance extends Component {
     this.loadBlockchainData()
   }
 
+  // replace with useEffects
   async loadBlockchainData() {
-    const { dispatch, web3, coinFlip, account } = this.props
+    const { dispatch, web3, coinFlip, account, username } = this.props
     await loadBalances(dispatch, web3, coinFlip, account)
+    await loadUsername(dispatch, coinFlip, account)
   }
   render() {
     return(
@@ -121,26 +151,32 @@ class Balance extends Component {
           Balance
         </div>
         <div className="card-body">
-        {this.props.showForm ? showForm(this.props) : <Spinner />}
+        {this.props.showFormBal && this.props.showFormBet ? showForm(this.props) : <CoinSpinner />}
         </div>
       </div>
     )
   }
 }
 
+// switching to useselector, below goes away
 function mapStateToProps(state) {
   const balanceLoading = balanceLoadingSelector(state)
+  const betExecuting = betExecutingSelector(state)
   return {
     account: accountSelector(state),
     coinFlip: coinFlipSelector(state),
     web3: web3Selector(state),
+    username: usernameSelector(state),
     etherBalance: etherBalanceSelector(state),
     coinFlipEtherBalance: coinFlipEtherBalanceSelector(state),
     balanceLoading,
-    showForm: !balanceLoading,
+    betExecuting,
+    showFormBal: !balanceLoading,
+    showFormBet: !betExecuting,
     etherDepositAmount: etherDepositAmountSelector(state),
-    etherWithdrawAmount: etherWithdrawAmountSelector(state),
+    etherWithdrawAmount: etherWithdrawAmountSelector(state)
   }
 }
 
+// after switch to rfc, export happens at rfc declaration (so delete this)
 export default connect(mapStateToProps)(Balance)

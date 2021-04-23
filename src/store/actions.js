@@ -28,22 +28,43 @@ export function treasuryFunded(amount) {
   }
 }
 
+export function usernameAdding() {
+  return {
+    type: 'NAME_ADDING',
+  }
+}
+
+export function usernameAdded(username) {
+  return {
+    type: 'USERNAME_ADDED',
+    username
+  }
+}
+
+export function usernameChanged(username) {
+  return {
+    type: 'USERNAME_CHANGED',
+    username
+  }
+}
+
+export function usernameLoaded(username) {
+  return {
+    type: 'USERNAME_LOADED',
+    username
+  }
+}
+
 export function betExecuting() {
   return {
     type: 'BET_EXECUTING',
   }
 }
 
-export function betExecuted(input) {
-  if(input == "success") {
+export function betExecuted() {
     return {
       type: 'BET_EXECUTED',
     }
-  } else {
-    return {
-      type: 'BET_FAILED',
-    }
-  }
 }
 
 export function betAmountChanged(amount) {
@@ -59,10 +80,23 @@ export function betsLoading() {
   }
 }
 
-export function betsLoaded(bets) {
+export function allBetsLoaded(bets) {
   return {
-    type: 'BETS_LOADED',
+    type: 'ALL_BETS_LOADED',
     bets
+  }
+}
+
+export function allDepositsLoading() {
+  return {
+    type: 'ALL_DEPOSTS_LOADING',
+  }
+}
+
+export function allDepositsLoaded(allDeposits) {
+  return {
+    type: 'ALL_DEPOSITS_LOADED',
+    allDeposits
   }
 }
 
@@ -83,6 +117,19 @@ export function balanceLoaded() {
 export function balanceLoading() {
   return {
     type: 'BALANCE_LOADING'
+  }
+}
+
+export function treasuryBalanceLoading() {
+  return {
+    type: 'TREASURY_BALANCE_LOADING'
+  }
+}
+
+export function treasuryBalanceLoaded(balance) {
+  return {
+    type: 'TREASURY_BALANCE_LOADED',
+    balance
   }
 }
 

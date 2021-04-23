@@ -79,6 +79,38 @@
   }
 }
 
+.box {
+  height: 10vh;
+  width: 25vw;
+  display: flex;
+  justify-content: left;
+  align-items: top;
+  transform: translateZ(1px);
+}
+
+.coin-spinner {
+  height: 35px;
+  width: 35px;
+  background-color: #fff;
+  border-radius: 50%;
+  animation: coin-spinner 4s linear infinite;
+}
+
+@keyframes coin-spinner {
+  0% {
+    animation-timing-function: linear;
+    transform: rotateX(0deg);
+  }
+  50% {
+    animation-timing-function: ease;
+    transform: rotateX(1800deg);
+  }
+  100% {
+    animation-timing-function: linear;
+    transform: rotate(3600deg);
+  }
+}
+
 .card {
   border-radius: 0px;
   display: flex;
