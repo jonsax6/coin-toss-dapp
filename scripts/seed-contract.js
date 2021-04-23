@@ -24,11 +24,11 @@ module.exports = async function(callback) {
     const username1 = "Jonathan"
     const username2 = "Katelin"
 
-    let amount = ether(10)
+    let amount = ether(2)
     await coinFlip.fundTreasury({ from: owner, value: amount })
     console.log(`Funded ${amount} ether to coinFlip contract`)
 
-    amount = ether(3)
+    amount = ether(1)
     await coinFlip.deposit({ from: owner, value: amount })
     console.log(`Deposit ${amount} ether to owner contract account`)
     await coinFlip.deposit({ from: player1, value: amount })
@@ -43,23 +43,23 @@ module.exports = async function(callback) {
     await coinFlip.addUsername(username2, player2, { from: player2 })
     console.log(`added username ${username2} to username2 contract account`)
 
-    await coinFlip.coinFlip(ether(0.1), { from: owner })
+    await coinFlip.coinFlip(ether(0.01), { from: owner })
     console.log(`bet on owner contract account`)
     await wait(2)
 
-    await coinFlip.coinFlip(ether(0.2), { from: player1 })
+    await coinFlip.coinFlip(ether(0.02), { from: player1 })
     console.log(`bet on player1 contract account`)
     await wait(2)
     
-    await coinFlip.coinFlip(ether(0.2), { from: player2 })
+    await coinFlip.coinFlip(ether(0.02), { from: player2 })
     console.log(`bet on player2 contract account`)
     await wait(2)
 
-    await coinFlip.coinFlip(ether(0.15), { from: owner })
+    await coinFlip.coinFlip(ether(0.015), { from: owner })
     console.log(`bet on owner contract account`)
     await wait(2)
 
-    await coinFlip.coinFlip(ether(0.25), { from: player1 })
+    await coinFlip.coinFlip(ether(0.025), { from: player1 })
     console.log(`bet on player1 contract account`)
     await wait(2)
     
@@ -67,27 +67,67 @@ module.exports = async function(callback) {
     console.log(`bet on player2 contract account`)
     await wait(2)
 
-    await coinFlip.coinFlip(ether(0.35), { from: owner })
+    await coinFlip.coinFlip(ether(0.035), { from: owner })
     console.log(`bet on owner contract account`)
     await wait(2)
 
-    await coinFlip.coinFlip(ether(0.2), { from: player1 })
+    await coinFlip.coinFlip(ether(0.02), { from: player1 })
     console.log(`bet on player1 contract account`)
     await wait(2)
     
-    await coinFlip.coinFlip(ether(0.2), { from: player2 })
+    await coinFlip.coinFlip(ether(0.02), { from: player2 })
     console.log(`bet on player2 contract account`)
     await wait(2)
 
-    await coinFlip.coinFlip(ether(0.15), { from: owner })
+    await coinFlip.coinFlip(ether(0.011), { from: owner })
     console.log(`bet on owner contract account`)
     await wait(2)
 
-    await coinFlip.coinFlip(ether(0.25), { from: player1 })
+    await coinFlip.coinFlip(ether(0.022), { from: player1 })
     console.log(`bet on player1 contract account`)
     await wait(2)
     
-    await coinFlip.coinFlip(ether(0.05), { from: player2 })
+    await coinFlip.coinFlip(ether(0.055), { from: player2 })
+    console.log(`bet on player2 contract account`)
+    await wait(2)
+
+    await coinFlip.coinFlip(ether(0.07), { from: player2 })
+    console.log(`bet on player2 contract account`)
+    await wait(2)
+
+    await coinFlip.coinFlip(ether(0.012), { from: owner })
+    console.log(`bet on owner contract account`)
+    await wait(2)
+
+    await coinFlip.coinFlip(ether(0.023), { from: player1 })
+    console.log(`bet on player1 contract account`)
+    await wait(2)
+    
+    await coinFlip.coinFlip(ether(0.055), { from: player2 })
+    console.log(`bet on player2 contract account`)
+    await wait(2)
+
+    await coinFlip.coinFlip(ether(0.034), { from: owner })
+    console.log(`bet on owner contract account`)
+    await wait(2)
+
+    await coinFlip.coinFlip(ether(0.012), { from: player1 })
+    console.log(`bet on player1 contract account`)
+    await wait(2)
+    
+    await coinFlip.coinFlip(ether(0.023), { from: player2 })
+    console.log(`bet on player2 contract account`)
+    await wait(2)
+
+    await coinFlip.coinFlip(ether(0.0115), { from: owner })
+    console.log(`bet on owner contract account`)
+    await wait(2)
+
+    await coinFlip.coinFlip(ether(0.014), { from: player1 })
+    console.log(`bet on player1 contract account`)
+    await wait(2)
+    
+    await coinFlip.coinFlip(ether(0.023), { from: player2 })
     console.log(`bet on player2 contract account`)
     await wait(2)
 
