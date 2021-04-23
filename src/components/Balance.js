@@ -76,7 +76,6 @@ const showForm = (props) => {
           event.preventDefault()
           depositEther(dispatch, coinFlip, web3, etherDepositAmount, account)
           console.log("form submitting...")
-          loadBalances(dispatch, web3, coinFlip, account)
         }}>
           <div className="col-12 col-sm pr-sm-2">
             <input

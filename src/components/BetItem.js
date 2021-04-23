@@ -15,7 +15,7 @@ export default function BetItem({bet}) {
   let timestamp = moment.unix(bet.timestamp).format('h:mm:ss a M/D')
   
   return (
-      <tr className={`order-${bet.timestamp}`} key={bet.timestamp}>
+      <tr className={`order-${bet.timestamp}`} key={bet.index}>
         <td className="text-muted">{timestamp}</td>
         <td>{username}</td>
         <td className={outcome === 'win' ? `text-${GREEN}` : `text-${RED}`}>{ethBet}</td>

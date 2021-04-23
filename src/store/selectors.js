@@ -17,6 +17,9 @@ export const coinFlipLoadedSelector = createSelector(coinFlipLoaded, cfl => cfl)
 const username = state => get(state, 'coinFlip.username')
 export const usernameSelector = createSelector(username, un => un)
 
+const bets = state => get(state, 'coinFlip.bets.data')
+export const betsSelector = createSelector(bets, b => b)
+
 const treasuryBalance = state => get(state, 'coinFlip.treasuryBalance.balance', 0)
 export const treasuryBalanceSelector = createSelector(treasuryBalance, 
   (balance) => {
@@ -34,6 +37,12 @@ export const balanceLoadingSelector = createSelector(balanceLoading, status => s
 
 const betExecuting = state => get(state, 'coinFlip.betExecuting', true)
 export const betExecutingSelector = createSelector(betExecuting, status => status)
+
+const betsLoading = state => get(state, 'coinFlip.betsLoading', true)
+export const betsLoadingSelector = createSelector(betsLoading, status => status)
+
+const betsLoaded = state => get(state, 'coinFlip.betsLoaded', false)
+export const betsLoadedSelector = createSelector(betsLoaded, bets => bets)
 
 const etherBalance = state => get(state, 'web3.balance', 0)
 export const etherBalanceSelector = createSelector(

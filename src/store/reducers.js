@@ -16,7 +16,7 @@ function web3(state = {}, action) {
 function coinFlip(state = {}, action) {
   switch (action.type) {
     case 'COINFLIP_LOADED':
-      return { ...state, loaded: true, contract: action.contract, username: "", betExecuting: false, bets: []}
+      return { ...state, loaded: true, contract: action.contract, username: "", betsLoading: false, betExecuting: false, bets: { loaded: true, data: {} }}
     case 'TREASURY_FUNDED':
       return { ...state, treasuryBalance: { ...state.treasuryBalance, funded: true }}
     case 'USERNAME_ADDING':
@@ -45,8 +45,10 @@ function coinFlip(state = {}, action) {
       return { ...state, betExecuting: true }
     case 'BET_EXECUTED':
       return { ...state, betExecuting: false }
-    case 'BET_FAILED':
-      return { ...state, betExecuting: false }
+    case 'BETS_LOADING':
+      return { ...state, betsLoading: true }
+    case 'BETS_LOADED':
+      return { ...state, betsLoading: false }
     case 'ALL_BETS_LOADING':
       return { ...state, betsLoading: true }
     case 'ALL_BETS_LOADED':

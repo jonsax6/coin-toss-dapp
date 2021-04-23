@@ -11,7 +11,7 @@ import {
   balanceLoaded,
   betExecuting,
   betExecuted,
-  allBetsLoaded,
+  betsLoaded,
   allDepositsLoaded,
   treasuryFunded,
   treasuryBalanceLoaded,
@@ -97,25 +97,26 @@ export const loadAllBets = async (coinFlip, dispatch) => {
   let allBets = betStream.map((event) => event.returnValues)
 
   const checkWins = (bet) => {
-    return bet.outcome == "win"
+    return bet.outcome === "win"
   }
 
   const checkLoses = (bet) => {
-    return bet.outcome == "lose"
+    return bet.outcome === "lose"
   }
 
   let winBets = allBets.filter(checkWins)
-  console.log(winBets)
-
   let loseBets = allBets.filter(checkLoses)
-  console.log(loseBets)
 
   winBets = winBets.sort((a,b) => b.betAmount - a.betAmount)
   loseBets = loseBets.sort((a,b) => a.betAmount - b.betAmount)
-  allBets = {...winBets, ...loseBets}
-  console.log({...winBets, ...loseBets})
+  console.log(winBets)
+  console.log(loseBets)
+
+  var mergedBets = winBets.concat(loseBets)
+  console.log(mergedBets)
+  // console.log({...winBets, ...loseBets})
   // Add bets to the redux store
-  dispatch(allBetsLoaded(allBets))
+  dispatch(betsLoaded(mergedBets))
 }
 
 export const getUsername = async (dispatch, coinFlip, account) => {

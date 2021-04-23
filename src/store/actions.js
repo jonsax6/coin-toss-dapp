@@ -80,7 +80,7 @@ export function betsLoading() {
   }
 }
 
-export function allBetsLoaded(bets) {
+export function betsLoaded(bets) {
   return {
     type: 'ALL_BETS_LOADED',
     bets
