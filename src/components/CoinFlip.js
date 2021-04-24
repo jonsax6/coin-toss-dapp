@@ -13,8 +13,6 @@ import {
 } from '../store/selectors'
 import { betAmountChanged, etherDepositAmountChanged, etherWithdrawAmountChanged, betExecuted } from '../store/actions'
 
-
-
 export default function CoinFlip() {
   const dispatch = useDispatch()
   const account = useSelector((state) => state.web3.account)
